@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crud Realtime Cadastro</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <label>Nome</label><input id="nome" type="text"><br><br>
+    <label>Codigo</label><input id="codigo" type="text"><br><br>
+    <label>Email</label><input id="email" type="text"><br><br>
+    
+    <hr>
+    <button id="inserir">Inserir</button>
+    <button id="selecionar">Selecionar</button>
+    <button id="atualizar">Atualizar</button>
+    <button id="deletar">Deletar</button>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBNpjhKShjGtaWCm1wafSFPAtnTQRSGXl8",
+          authDomain: "fir-realtime-5fddd.firebaseapp.com",
+          projectId: "fir-realtime-5fddd",
+          storageBucket: "fir-realtime-5fddd.appspot.com",
+          messagingSenderId: "204461946315",
+          appId: "1:204461946315:web:0c8918ac094e16d37cf24e"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import {getDatabase, ref, get, set, child, update, remove} 
+        from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+        const db = getDatabase();
+
+        var nome = document.getElementById("nome");
+        var codigo = document.getElementById("codigo");
+        var email = document.getElementById("email");
+
+        var inserir = document.getElementById("inserir");
+        var selecionar = document.getElementById("selecionar");
+        var atualizar = document.getElementById("atualizar");
+        var deletar = document.getElementById("deletar");
+
+        function InserirData(){
+            set(ref(db, "Usuarios/" + codigo.value), {
+                nomeUsuario: nome.value,
+                codigoUsuario: codigo.value,
+                emailUsuario: email.value 
+            })
+            .then(()=> {
+                alert("Usuario cadastrado com sucesso!!");
+            })
+            .catch((error) => {
+                alert("Ocorreu um erro!" + error);
+            });
+        }
+
+        function SelectUsuario(){
+            const dbref = ref(db);
+
+            get(child(dbref, "Usuarios/" + codigo.value)).then((snapshot)=>{
+                if(snapshot.exists()){
+                    nome.value = snapshot.val().nomeUsuario;
+                    codigo.value = snapshot.val().codigoUsuario;
+                    email.value = snapshot.val().emailUsuario;
+                }else{
+                    alert("Nenhum Usuário encontrado!!");
+                }
+            })
+            .catch((error) => {
+                alert("Ocorreu um erro!" + error);
+            });
+        }
+
+
+        function AtualizarUsuario(){
+            update(ref(db, "Usuarios/" + codigo.value), {
+                nomeUsuario: nome.value,
+                emailUsuario: email.value 
+            })
+            .then(()=> {
+                alert("Usuario Atualizado com sucesso!!");
+            })
+            .catch((error) => {
+                alert("Ocorreu um erro!" + error);
+            });
+        }
+
+
+        function DeletarUsuario(){
+            remove(ref(db, "Usuarios/" + codigo.value))
+            .then(()=> {
+                alert("Usuario removido com sucesso!!");
+            })
+            .catch((error) => {
+                alert("Ocorreu um erro!" + error);
+            });
+        }
+
+        inserir.addEventListener('click', InserirData);
+        selecionar.addEventListener('click', SelectUsuario);
+        atualizar.addEventListener('click', AtualizarUsuario);
+        deletar.addEventListener('click', DeletarUsuario);
+
+      </script>
+</body>
+</html>
